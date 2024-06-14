@@ -1,7 +1,31 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+
+const EmergencyContactSchema = new mongoose.Schema({
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
+        type: String,
+        required: true
+    },
+    address: {
+        type: String,
+        required: true
+    },
+    phone: {
+        type: String,
+        required: true
+    }
+});
+
 const UserSchema = new mongoose.Schema({
-    name: {
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
         type: String,
         required: true
     },
@@ -26,10 +50,6 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    emergencyPhone: {
-        type: String,
-        required: true
-    },
     gender: {
         type: String,
         required: true
@@ -49,13 +69,63 @@ const UserSchema = new mongoose.Schema({
     bloodType: {
         type: String,
         required: true
-    }
+    },
+    personalSurgicalHistory: {
+        adrenalGlandSurgery: { type: Boolean, default: false },
+        arterySurgery: { type: Boolean, default: false },
+        prostateSurgery: { type: Boolean, default: false },
+        lungSurgery: { type: Boolean, default: false },
+        spineSurgery: { type: Boolean, default: false },
+        colonSurgery: { type: Boolean, default: false },
+        neckSurgery: { type: Boolean, default: false },
+        bladderSurgery: { type: Boolean, default: false },
+        smallIntestineSurgery: { type: Boolean, default: false },
+        uterusSurgery: { type: Boolean, default: false },
+        kidneySurgery: { type: Boolean, default: false },
+        thyroidSurgery: { type: Boolean, default: false },
+        largeIntestineSurgery: { type: Boolean, default: false },
+        breastSurgery: { type: Boolean, default: false },
+        cesareanSection: { type: Boolean, default: false },
+        appendectomy: { type: Boolean, default: false },
+        esophagusSurgery: { type: Boolean, default: false },
+        gastricBypassSurgery: { type: Boolean, default: false },
+        hemorrhoidSurgery: { type: Boolean, default: false },
+        stomachSurgery: { type: Boolean, default: false }
+    },
+    personalAllergiesHistory: {
+        foodAllergies: { type: Boolean, default: false },
+        drugAllergies: { type: Boolean, default: false },
+        dustAllergies: { type: Boolean, default: false },
+        petAllergies: { type: Boolean, default: false },
+        temperatureChanges: { type: Boolean, default: false },
+        seasonalAllergies: { type: Boolean, default: false },
+        pollutionAllergy: { type: Boolean, default: false },
+        moldAllergies: { type: Boolean, default: false }
+    },
+    familyMedicalHistory: {
+        cancer: { type: Boolean, default: false },
+        anemia: { type: Boolean, default: false },
+        highBloodPressure: { type: Boolean, default: false },
+        diabetes: { type: Boolean, default: false },
+        anesthesiaReaction: { type: Boolean, default: false },
+        bloodClots: { type: Boolean, default: false },
+        bleedingProblems: { type: Boolean, default: false },
+        heartDisease: { type: Boolean, default: false },
+        hepatitis: { type: Boolean, default: false },
+        stroke: { type: Boolean, default: false },
+        kidneyDisease: { type: Boolean, default: false },
+        endocrineProblems: { type: Boolean, default: false }
+    },
+    emergencyContacts: [EmergencyContactSchema]
 });
+
+// Hash password before saving
 UserSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
   
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     next();
-  });
+});
+
 module.exports = mongoose.model('User', UserSchema);
