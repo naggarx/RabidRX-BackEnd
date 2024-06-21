@@ -17,5 +17,6 @@ exports.login = async (req, res) => {
   }
 
   const token = jwt.sign({ username: adminUsername, role: 'admin' }, secretKey, { expiresIn: '1h' });
-  res.send({ token });
+  res.json({ message: 'Sign in successful', token });
+  //res.send({ token });
 };
