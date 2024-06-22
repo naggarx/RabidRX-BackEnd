@@ -1,5 +1,6 @@
 const User = require('../models/User');
-
+const bcrypt = require('bcryptjs');
+const { use } = require('../routes/UserRoutes');
 
 const createUser = async (req, res) => {
   try {
@@ -63,8 +64,60 @@ const viewProfile = async (req, res) => {
     }
   };
 
+// update password ---> Abdo
+const updatePassword = async (req, res) => {
+   // const token =localStorage.getItem("")
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1];
+    const {oldPassword, newPassword } = req.body;
+  
+    try {
+      const user = await User.findOne({ token }).exec();
+      if (!user) {
+        return res.status(404).json({ 'message': 'User not found' });
+      }
+      const isMatch = await bcrypt.compare(oldPassword, user.password); 
+      if (!isMatch) {
+        return res.status(400).json({ 'message': 'password is incorrect' });
+      }
+      
+      user.password=newPassword;
+      await user.save();
+
+      res.status(200).json({ 'message': 'Password updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ 'message': 'Server error' });
+  }
+};
+
+// updateProfile --> Abdo
+const updateProfile = async (req, res) => {
+  const authHeader = req.headers['token'];
+  const token =authHeader.split(' ')[1];
+  console.log(token);
+  const userId =await User.findOne({ token }).exec();
+  const updateData = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(userId._id, updateData, {
+      new: true,  
+      runValidators: true 
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ 'message': 'User not found' });
+    }
+
+    res.status(200).json({'message': 'updated successfully'}); 
+  } catch (err) {
+    console.error('Error updating profile:', err);
+    res.status(500).json({ 'message': 'Server error' });
+  }
+};
+
 module.exports = {
     createUser,
     viewProfile,
-
+    updatePassword,
+    updateProfile
 };
