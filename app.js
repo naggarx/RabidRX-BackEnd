@@ -5,6 +5,7 @@ const mongoose = require('./db'); // Import the db connection
 const userRoutes = require('./routes/UserRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const clinicRoutes = require('./routes/clinicRoutes');
+const labRoutes = require('./routes/labRoutes');
 
 const app = express();
 
@@ -18,3 +19,4 @@ app.listen(3000, () => {
 app.use('/users', userRoutes);
 app.use('/admin', adminRoutes);
 app.use('/clinics', clinicRoutes);
+app.use('/labs', labRoutes);
