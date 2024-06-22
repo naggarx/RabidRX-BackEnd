@@ -1,4 +1,7 @@
 const Clinic = require('../models/Clinic');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const jwtSecret = process.env.JWT_SECRET
 
 exports.createClinic = async (req, res) => {
   try {
@@ -50,6 +53,27 @@ exports.deleteClinic = async (req, res) => {
       return res.status(404).send();
     }
     res.status(200).send(clinic);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+exports.signIn = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const clinic = await Clinic.findOne({ username });
+    if (!clinic) {
+      return res.status(404).send({ error: 'Invalid username or password' });
+    }
+
+    const isMatch = await clinic.comparePassword(password);
+    if (!isMatch) {
+      return res.status(404).send({ error: 'Invalid username or password' });
+    }
+    const token = jwt.sign({ id: clinic._id }, jwtSecret, { expiresIn: '1h' });
+
+    res.status(200).send({ token });
   } catch (error) {
     res.status(500).send(error);
   }

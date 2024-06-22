@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const branchSchema = new mongoose.Schema({
   name: {
@@ -40,11 +41,39 @@ const LabSchema = new mongoose.Schema({
     required: true
   },
   socialMedia: [socialMediaSchema],
+  username: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
+
+LabSchema.pre('save', async function(next) {
+  try {
+    if (this.isModified('password') || this.isNew) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(this.password, salt);
+      this.password = hashedPassword;
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+LabSchema.methods.comparePassword = async function(candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+
 
 const Lab = mongoose.model('Lab', LabSchema);
 

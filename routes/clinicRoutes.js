@@ -13,4 +13,6 @@ router.post('/add', adminAuthMiddleware, authorizeAdmin, clinicController.create
 router.put('/:id', adminAuthMiddleware, authorizeAdmin, clinicController.updateClinic);
 router.delete('/:id', adminAuthMiddleware, authorizeAdmin, clinicController.deleteClinic);
 
+router.post('/signin', clinicController.signIn);
+
 module.exports = router;
