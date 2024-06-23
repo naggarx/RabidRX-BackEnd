@@ -1,7 +1,22 @@
 const Clinic = require('../models/Clinic');
+const multer = require('multer');
+const Diagnosis = require('../models/Diagnosis');
+const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const jwtSecret = process.env.JWT_SECRET
+
+
+// Setup multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Directory to save uploaded files
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // Generate unique filename
+  }
+});
+const upload = multer({ storage: storage });
 
 exports.createClinic = async (req, res) => {
   try {
@@ -78,3 +93,34 @@ exports.signIn = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
+
+exports.uploadDiagnosis = [
+  upload.single('pdf'),
+  async (req, res) => {
+    try {
+      const { clinicId, userId } = req.params;
+
+      // Ensure the clinic and user exist
+      const clinic = await Clinic.findById(clinicId);
+      const user = await User.findById(userId);
+
+      if (!clinic || !user) {
+        return res.status(404).json({ message: 'Clinic or User not found' });
+      }
+
+      // Create a new diagnosis
+      const diagnosis = new Diagnosis({
+        clinic: clinicId,
+        user: userId,
+        pdfPath: req.file.path // Save the file path
+      });
+
+      await diagnosis.save();
+
+      res.status(201).json(diagnosis);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+];
