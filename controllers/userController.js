@@ -55,6 +55,7 @@ const createUser = async (req, res) => {
 const viewProfile = async (req, res) => {
     try {
       const user = await User.findById(req.user.userId).select('-password');
+    
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -70,7 +71,6 @@ const updatePassword = async (req, res) => {
     const authHeader = req.headers['token'];
     const token =authHeader.split(' ')[1];
     const {oldPassword, newPassword } = req.body;
-  
     try {
       const user = await User.findOne({ token }).exec();
       if (!user) {
@@ -94,12 +94,11 @@ const updatePassword = async (req, res) => {
 // updateProfile --> Abdo
 const updateProfile = async (req, res) => {
   const authHeader = req.headers['token'];
-  const token =authHeader.split(' ')[1];
-  console.log(token);
+  const token =authHeader.split(' ')[1]; 
   const userId =await User.findOne({ token }).exec();
   const updateData = req.body;
   try {
-    const updatedUser = await User.findByIdAndUpdate(userId._id, updateData, {
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
       new: true,  
       runValidators: true 
     });
@@ -114,10 +113,26 @@ const updateProfile = async (req, res) => {
     res.status(500).json({ 'message': 'Server error' });
   }
 };
+// logout --> Abdo
+const logout = async (req, res) => { 
+  const authHeader = req.headers['token'];
+  const token =authHeader.split(' ')[1]; 
+  if (!token) return res.sendStatus(204);//No content
+  const foundUser = await User.findOne({ token }).exec();
+  if (!foundUser) { 
+      return res.sendStatus(204);//No content
+  }
+
+  foundUser.token = '';
+  const result = await foundUser.save();
+  res.sendStatus(204);//No content
+}
+
 
 module.exports = {
     createUser,
     viewProfile,
     updatePassword,
-    updateProfile
+    updateProfile,
+    logout
 };
