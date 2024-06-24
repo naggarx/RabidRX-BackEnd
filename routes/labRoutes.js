@@ -12,7 +12,7 @@ router.get('/:id', labController.getLabById);
 router.post('/add', adminAuthMiddleware, authorizeAdmin, labController.createLab);
 router.put('/:id', adminAuthMiddleware, authorizeAdmin, labController.updateLab);
 router.delete('/:id', adminAuthMiddleware, authorizeAdmin, labController.deleteLab);
-
+router.post('/:labId/users/:userId/medicalAnalysis', labController.uploadMedicalAnalysis);
 router.post('/signin', labController.signIn);
 
 module.exports = router;

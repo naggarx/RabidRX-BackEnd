@@ -18,5 +18,6 @@ app.listen(3000, () => {
 
 app.use('/users', userRoutes);
 app.use('/admin', adminRoutes);
+
 app.use('/clinics', clinicRoutes);
 app.use('/labs', labRoutes);
