@@ -1,29 +1,18 @@
 import joblib
 import sys
 import json
-from sklearn.preprocessing import StandardScaler
-import numpy as np
-import pandas as pd
-
 import tensorflow as tf
 
-
+# Load Model
 model = tf.keras.models.load_model('predictionModels\diab.h5')
 
+# Load StandardScaler
+scaler =joblib.load('predictionModels\scaler.joblib')
 
 # Read input data from stdin
 data = json.loads(sys.stdin.read())
 
-
-# Read input data from stdin
-# gender='Female'
-# age=80.0 
-# hypertension=False
-# heart_disease=1
-# smoking_history='never'
-# bmi=25.19
-# HbA1c_level=6.6
-# blood_glucose_level=140
+# Set Input Values
 gender=data['gender']
 age=data['age']
 hypertension=data['hypertension']
@@ -32,6 +21,8 @@ smoking_history=data['smoking_history']
 bmi=data['bmi']
 HbA1c_level=data['HbA1c_level']
 blood_glucose_level=data['blood_glucose_level']
+
+# Adjust input values
 if gender=='Female':
   gender_Female=True
   gender_Male=False
@@ -84,22 +75,17 @@ else:
   smoking_history_never=False
   smoking_history_not_current=True
 
-
-
+# Set features
 features = [age, hypertension,  heart_disease,  bmi,  HbA1c_level, blood_glucose_level,  gender_Female,  gender_Male,
             gender_Other, smoking_history_No_Info , smoking_history_current, smoking_history_ever,  smoking_history_former, 
             smoking_history_never, smoking_history_not_current ]
-scaler =joblib.load('predictionModels\scaler.joblib')
 
-
+# Scale Features
 features = scaler.transform([features])
+
 # Predict
 prediction = model.predict([features])
 
 # Output prediction
-
 prediction_list = prediction.tolist()
-
-
-# Print the prediction result
 print(json.dumps({'prediction': prediction_list[0]}))

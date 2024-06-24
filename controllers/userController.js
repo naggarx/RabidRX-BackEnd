@@ -134,10 +134,7 @@ const logout = async (req, res) => {
 
 
 const predictDiabetes = async(req, res) => {
-
-  //return res.status(500).json({ error: 'herrrrrrrreeeeeee' });
-  // const { bmi, blood_glucose_level, HbA1c_level, smoking_history, userId } = req.body;
-  // console.log(userId);
+  
   try {
     console.log(req.body);
     const { bmi, blood_glucose_level, HbA1c_level, smoking_history, userId } = req.body;
@@ -147,7 +144,6 @@ const predictDiabetes = async(req, res) => {
     if (!user) {
         return res.status(500).json({ error: 'User not found' });
     }
-
       const inputData = {
           bmi,
           blood_glucose_level,
@@ -158,11 +154,7 @@ const predictDiabetes = async(req, res) => {
           hypertension: user.personalMedicalHistory.hypertension,
           heart_disease: user.personalMedicalHistory.heartDisease
       };
-   
-
-
-      console.log(inputData);
-      const pythonInterpreter = 'python'; // Adjust as necessary if Python 3 is installed under a different name (e.g., python3.10)
+  
       const pythonScriptPath = path.join(__dirname, '../python/diabetesPredict.py');
 
       // Execute the Python 
@@ -171,16 +163,32 @@ const predictDiabetes = async(req, res) => {
         if (error) {
             console.error(`exec error: ${error}`);
             return res.status(500).json({ error: 'Error in prediction' });
-           
-            
         }
         try {
+          //Extract output and send message
           const lines = stdout.trim().split('\n');
           const lastLine = lines[lines.length - 1];
-          console.log( lastLine);
-            const result = JSON.parse(lastLine);
-            res.json(result);
-        } catch (parseError) {
+          const result = JSON.parse(lastLine.replace(/'/g, '"').replace('array', '["array"]').replace('dtype=float32', ']').replace(/'/g, '"').replace(/ \], /, '"], '));
+          const prediction = result.prediction;
+          if (!prediction || prediction.length !== 2) 
+            {
+              throw new Error('Invalid prediction format');
+            }
+
+          const [notDiabetes, diabetes] = prediction;
+          let message;
+
+          if (notDiabetes > diabetes) 
+            {
+              message = `Prediction: Not Diabetes with ${(notDiabetes * 100).toFixed(2)}% certainty`;
+            } 
+          else 
+            {
+              message = `Prediction: Diabetes with ${(diabetes * 100).toFixed(2)}% certainty`;
+            }
+          res.json({ message });
+        } 
+        catch (parseError) {
             console.error(`parse error: ${parseError}`);
             res.status(500).json({ error: 'Error parsing prediction result' });
         }
