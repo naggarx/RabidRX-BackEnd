@@ -1,6 +1,11 @@
 const User = require('../models/User');
+const { exec } = require('child_process');
+const path = require('path');
 const bcrypt = require('bcryptjs');
-const { use } = require('../routes/UserRoutes');
+const { spawn } = require('child_process');
+
+const { use } = require('../routes/userRoutes');
+
 
 const createUser = async (req, res) => {
   try {
@@ -129,10 +134,74 @@ const logout = async (req, res) => {
 }
 
 
+const predictDiabetes = async(req, res) => {
+
+  //return res.status(500).json({ error: 'herrrrrrrreeeeeee' });
+  // const { bmi, blood_glucose_level, HbA1c_level, smoking_history, userId } = req.body;
+  // console.log(userId);
+  try {
+    console.log(req.body);
+    const { bmi, blood_glucose_level, HbA1c_level, smoking_history, userId } = req.body;
+
+    // Fetch additional data from user database
+    const user = await User.findById(userId);
+    if (!user) {
+        return res.status(500).json({ error: 'User not found' });
+    }
+
+      const inputData = {
+          bmi,
+          blood_glucose_level,
+          HbA1c_level,
+          smoking_history,
+          gender: user.gender,
+          age: user.age,
+          hypertension: user.personalMedicalHistory.hypertension,
+          heart_disease: user.personalMedicalHistory.heartDisease
+      };
+   
+
+
+      console.log(inputData);
+      const pythonInterpreter = 'python'; // Adjust as necessary if Python 3 is installed under a different name (e.g., python3.10)
+      const pythonScriptPath = path.join(__dirname, '../python/diabetesPredict.py');
+
+      // Execute the Python 
+      const pythonProcess = exec(`python ${pythonScriptPath}`, (error, stdout, stderr) => {
+    
+        if (error) {
+            console.error(`exec error: ${error}`);
+            return res.status(500).json({ error: 'Error in prediction' });
+           
+            
+        }
+        try {
+          const lines = stdout.trim().split('\n');
+          const lastLine = lines[lines.length - 1];
+          console.log( lastLine);
+            const result = JSON.parse(lastLine);
+            res.json(result);
+        } catch (parseError) {
+            console.error(`parse error: ${parseError}`);
+            res.status(500).json({ error: 'Error parsing prediction result' });
+        }
+    });
+    pythonProcess.stdin.write(JSON.stringify(inputData));
+    pythonProcess.stdin.end();   
+
+} catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+}
+};
+
+
 module.exports = {
     createUser,
     viewProfile,
     updatePassword,
     updateProfile,
-    logout
+    logout,
+    predictDiabetes,
+    
 };

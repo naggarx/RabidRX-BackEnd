@@ -11,4 +11,5 @@ router.put('/updateProfile', UserController.updateProfile);
 router.get('/logout', UserController.logout);
 router.post('/signin', AuthController.signIn);
 router.get('/profile', authMiddleware, UserController.viewProfile);
+router.post('/predict', UserController.predictDiabetes);
 module.exports = router;

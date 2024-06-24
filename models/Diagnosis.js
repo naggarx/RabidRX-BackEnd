@@ -7,6 +7,7 @@ const DiagnosisSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
 });
 
+
 const Diagnosis = mongoose.model('Diagnosis', DiagnosisSchema);
 
 module.exports = Diagnosis;
