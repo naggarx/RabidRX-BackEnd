@@ -136,11 +136,12 @@ const logout = async (req, res) => {
 const predictDiabetes = async(req, res) => {
   
   try {
-    console.log(req.body);
-    const { bmi, blood_glucose_level, HbA1c_level, smoking_history, userId } = req.body;
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1];
+    const { bmi, blood_glucose_level, HbA1c_level, smoking_history } = req.body;
 
     // Fetch additional data from user database
-    const user = await User.findById(userId);
+    const user = await User.findOne({ token }).exec();
     if (!user) {
         return res.status(500).json({ error: 'User not found' });
     }
@@ -154,7 +155,7 @@ const predictDiabetes = async(req, res) => {
           hypertension: user.personalMedicalHistory.hypertension,
           heart_disease: user.personalMedicalHistory.heartDisease
       };
-  
+      
       const pythonScriptPath = path.join(__dirname, '../python/diabetesPredict.py');
 
       // Execute the Python 
