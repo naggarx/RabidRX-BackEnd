@@ -122,7 +122,6 @@ const logout = async (req, res) => {
   if (!foundUser) { 
       return res.sendStatus(204);//No content
   }
-
   foundUser.token = '';
   const result = await foundUser.save();
   res.sendStatus(204);//No content
