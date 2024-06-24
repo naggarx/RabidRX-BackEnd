@@ -32,7 +32,7 @@ else:
   gender_Male=True
   gender_Other=False
 
-if smoking_history=='No Info':
+if smoking_history=='no_info':
   smoking_history_No_Info=True
   smoking_history_current=False
   smoking_history_ever=False

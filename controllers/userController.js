@@ -132,7 +132,6 @@ const logout = async (req, res) => {
   res.sendStatus(204);//No content
 }
 
-
 const predictDiabetes = async(req, res) => {
   
   try {
@@ -187,6 +186,7 @@ const predictDiabetes = async(req, res) => {
             {
               message = `Prediction: Diabetes with ${(diabetes * 100).toFixed(2)}% certainty`;
             }
+          
           res.json({ message });
         } 
         catch (parseError) {
