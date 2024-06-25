@@ -20,6 +20,21 @@ const EmergencyContactSchema = new mongoose.Schema({
     }
 });
 
+const MedicalAnalysisSchema = new mongoose.Schema({
+    lab: { type: mongoose.Schema.Types.ObjectId, ref: 'Lab', required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    testName:String,
+    pdfPath: { type: String, required: true }, // Field to store the path or URL of the uploaded PDF
+    date: { type: Date, default: Date.now },
+});
+
+const DiagnosisSchema = new mongoose.Schema({
+    clinic: { type: mongoose.Schema.Types.ObjectId, ref: 'Clinic', required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    pdfPath: { type: String, required: true }, // Field to store the path or URL of the uploaded PDF
+    date: { type: Date, default: Date.now },
+  });
+
 const UserSchema = new mongoose.Schema({
     firstName: {
         type: String,
@@ -144,7 +159,13 @@ const UserSchema = new mongoose.Schema({
         kidneyDisease: { type: Boolean, default: false },
         endocrineProblems: { type: Boolean, default: false }
     },
-    emergencyContacts: [EmergencyContactSchema]
+    emergencyContacts: [EmergencyContactSchema],
+    medicalAnalysis:[MedicalAnalysisSchema],
+    pendingMedicalAnalysis:[MedicalAnalysisSchema],
+    diagnosis:[DiagnosisSchema],
+    pendingDiagnosis:[DiagnosisSchema],
+    numPendingNotifications:{type:Number,default:0}
+
 });
 
 // Hash password before saving

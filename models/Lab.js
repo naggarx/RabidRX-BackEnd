@@ -31,6 +31,7 @@ const LabSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  token : String,
   about: {
     type: String,
     required: true
@@ -54,6 +55,7 @@ const LabSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+  
 });
 
 LabSchema.pre('save', async function(next) {

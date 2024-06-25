@@ -118,6 +118,18 @@ const updateProfile = async (req, res) => {
     res.status(500).json({ 'message': 'Server error' });
   }
 };
+
+// get id by email 
+const getId = async (req, res) => { 
+  const email=req.body.email;
+  if (!email) return res.sendStatus(204);//No content
+  const foundUser = await User.findOne({ email }).exec();
+  if (!foundUser) { 
+      return res.sendStatus(204);//No content
+  }
+  res.status(200).json({'id':foundUser._id});
+}
+
 // logout --> Abdo
 const logout = async (req, res) => { 
   const authHeader = req.headers['token'];
@@ -134,7 +146,6 @@ const logout = async (req, res) => {
 
 
 const predictDiabetes = async(req, res) => {
-  
   try {
     const authHeader = req.headers['token'];
     const token =authHeader.split(' ')[1];
@@ -211,5 +222,5 @@ module.exports = {
     updateProfile,
     logout,
     predictDiabetes,
-    
+    getId    
 };

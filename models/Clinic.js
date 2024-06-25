@@ -54,7 +54,8 @@ const clinicSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  token:String
 });
 
 clinicSchema.pre('save', async function(next) {
