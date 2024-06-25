@@ -140,3 +140,21 @@ exports.uploadDiagnosis = [
     }
   }
 ];
+
+// logout --> Abdo
+exports.logout = async (req, res) => { 
+  try {
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1]; 
+    if (!token) return res.sendStatus(400);//validation error
+    const found = await Clinic.findOne({ token }).exec();
+    if (!found) { 
+        return res.sendStatus(400);//validation error
+    }
+    found.token = '';
+    await found.save();
+    res.sendStatus(204);//No content
+   } catch (err) {
+    res.status(500).json({ 'message': 'Server error' });
+  }
+ }
