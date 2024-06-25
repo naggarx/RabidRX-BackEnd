@@ -11,6 +11,7 @@ router.get('/:id', labController.getLabById);
 
 // Protected routes to create, update, or delete clinics
 router.post('/add', adminAuthMiddleware, authorizeAdmin, labController.createLab);
+router.put('/logout', labController.logout);
 router.put('/:id', adminAuthMiddleware, authorizeAdmin, labController.updateLab);
 router.delete('/:id', adminAuthMiddleware, authorizeAdmin, labController.deleteLab);
 router.post('/:labId/users/:userId/medicalAnalysis', labController.uploadMedicalAnalysis);

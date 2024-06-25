@@ -98,11 +98,11 @@ const updatePassword = async (req, res) => {
 
 // updateProfile --> Abdo
 const updateProfile = async (req, res) => {
-  const authHeader = req.headers['token'];
-  const token =authHeader.split(' ')[1]; 
-  const userId =await User.findOne({ token }).exec();
-  const updateData = req.body;
   try {
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1]; 
+    const userId =await User.findOne({ token }).exec();
+    const updateData = req.body;
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
       new: true,  
       runValidators: true 
@@ -113,13 +113,12 @@ const updateProfile = async (req, res) => {
     }
 
     res.status(200).json({'message': 'updated successfully'}); 
-  } catch (err) {
-    console.error('Error updating profile:', err);
+  } catch (err) { 
     res.status(500).json({ 'message': 'Server error' });
   }
 };
 
-// get id by email 
+// get id by email --->Abdo
 const getId = async (req, res) => { 
   const email=req.body.email;
   if (!email) return res.sendStatus(204);//No content
@@ -130,19 +129,28 @@ const getId = async (req, res) => {
   res.status(200).json({'id':foundUser._id});
 }
 
-// logout --> Abdo
-const logout = async (req, res) => { 
-  const authHeader = req.headers['token'];
-  const token =authHeader.split(' ')[1]; 
-  if (!token) return res.sendStatus(204);//No content
-  const foundUser = await User.findOne({ token }).exec();
-  if (!foundUser) { 
-      return res.sendStatus(204);//No content
+ //get number of pending notification
+ const getNumOfNotification = async (req, res) => { 
+  try {
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1]; 
+    if (!token) return res.status(400).json({ 'message': 'token expired or not found' });
+
+    const foundUser = await User.findOne({ token }).exec();
+
+    if (!foundUser) {
+      return res.status(400).json({ 'message': 'User not found' });
+    }
+
+    res.status(200).json({'numberOfPendingNotification':foundUser.numPendingNotifications});
+  } catch (err) {
+    res.status(500).json({ 'message': 'Server error' });
   }
-  foundUser.token = '';
-  const result = await foundUser.save();
-  res.sendStatus(204);//No content
+
+
 }
+
+
 
 const predictDiabetes = async(req, res) => {
   try {
@@ -214,6 +222,24 @@ const predictDiabetes = async(req, res) => {
 }
 };
 
+// logout --> Abdo
+const logout = async (req, res) => { 
+  try{
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1]; 
+    if (!token) return res.sendStatus(400);//validation error
+    const foundUser = await User.findOne({ token }).exec();
+    if (!foundUser) { 
+        return res.sendStatus(400);//validation error
+    }
+    foundUser.token = '';
+    const result = await foundUser.save();
+    res.sendStatus(204);//No content
+  }catch (err) {
+    res.status(500).json({ 'message': 'Server error' });
+  }
+ }
+
 
 module.exports = {
     createUser,
@@ -222,5 +248,6 @@ module.exports = {
     updateProfile,
     logout,
     predictDiabetes,
-    getId    
+    getId,
+    getNumOfNotification
 };

@@ -12,6 +12,7 @@ router.get('/:id', clinicController.getClinicById);
 
 // Protected routes to create, update, or delete clinics
 router.post('/add', adminAuthMiddleware, authorizeAdmin, clinicController.createClinic);
+router.put('/logout', clinicController.logout);
 router.put('/:id', adminAuthMiddleware, authorizeAdmin, clinicController.updateClinic);
 router.delete('/:id', adminAuthMiddleware, authorizeAdmin, clinicController.deleteClinic);
 router.post('/signin', clinicController.signIn);
