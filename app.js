@@ -6,6 +6,7 @@ const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const clinicRoutes = require('./routes/clinicRoutes');
 const labRoutes = require('./routes/labRoutes');
+const notificationRoutes=require('./routes/notificationRoutes');
 
 const app = express();
 
@@ -21,3 +22,4 @@ app.use('/admin', adminRoutes);
 
 app.use('/clinics', clinicRoutes);
 app.use('/labs', labRoutes);
+app.use('/notifications', notificationRoutes);

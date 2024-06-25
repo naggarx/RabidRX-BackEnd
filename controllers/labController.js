@@ -1,9 +1,8 @@
-const Lab = require('../models/Lab');
-const User = require('../models/User');
+const Lab = require('./../models/Lab');
+const User = require('./../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
-const MedicalAnalysis = require('../models/LabMedicalAnalysis');
+const multer = require('multer'); 
 const jwtSecret = process.env.JWT_SECRET
 
 
@@ -76,12 +75,24 @@ exports.deleteLab = async (req, res) => {
     res.status(500).send(error);
   }
 };
-
+// get id of lab ----> Abdo
+exports.getId = async (req, res) => {
+  try {
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1];
+    const lab = await Lab.findOne({ token }).exec();
+    if (!lab) {
+      return res.status(404).send();
+    }
+    res.status(200).json({'id':lab._id});
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
 
 exports.signIn = async (req, res) => {
   try {
     const { username, password } = req.body;
-
     const lab = await Lab.findOne({ username });
     if (!lab) {
       return res.status(404).send({ error: 'Invalid username or password' });
@@ -92,13 +103,16 @@ exports.signIn = async (req, res) => {
       return res.status(404).send({ error: 'Invalid username or password' });
     }
     const token = jwt.sign({ id: lab._id }, jwtSecret, { expiresIn: '1h' });
-
-    res.status(200).send({ token });
+    lab.token=token; 
+    await lab.save();
+    res.status(200).json({'signin successfully':token});
   } catch (error) {
     res.status(500).send(error);
   }
 };
-// uploadMedicalAnalysis ----> Abdo
+
+
+// uploadMedicalAnalysis ----> Abdo http://localhost:3000/labs/:labId/users/:userId/medicalAnalysis
 exports.uploadMedicalAnalysis = [
   upload.single('pdf'),
   async (req, res) => {
@@ -114,14 +128,15 @@ exports.uploadMedicalAnalysis = [
       }
 
       // Create a new medical Analysis
-      const Medicalanalysis = new MedicalAnalysis({
+      const Medicalanalysis = {
         lab: labId,
         user: userId,
         testName:testname,
-        pdfPath: req.file.path // Save the file path
-      });
-
-      await Medicalanalysis.save();
+        pdfPath: req.file.path, // Save the file path
+      };
+      user.numPendingNotifications++;
+      user.pendingMedicalAnalysis.push(Medicalanalysis);
+      await user.save();
 
       res.status(201).json(Medicalanalysis);
     } catch (error) {

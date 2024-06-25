@@ -1,6 +1,5 @@
 const Clinic = require('../models/Clinic');
-const multer = require('multer');
-const Diagnosis = require('../models/Diagnosis');
+const multer = require('multer'); 
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -87,13 +86,28 @@ exports.signIn = async (req, res) => {
       return res.status(404).send({ error: 'Invalid username or password' });
     }
     const token = jwt.sign({ id: clinic._id }, jwtSecret, { expiresIn: '1h' });
-
+    clinic.token=token; 
+    await clinic.save();
     res.status(200).send({ token });
   } catch (error) {
     res.status(500).send(error);
   }
 };
 
+// get id of clinic ----> Abdo
+exports.getId = async (req, res) => {
+  try {
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1];
+    const clinic = await Clinic.findOne({ token }).exec();
+    if (!clinic) {
+      return res.status(404).send();
+    }
+    res.status(200).json({'id':clinic._id});
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
 
 exports.uploadDiagnosis = [
   upload.single('pdf'),
@@ -110,13 +124,15 @@ exports.uploadDiagnosis = [
       }
 
       // Create a new diagnosis
-      const diagnosis = new Diagnosis({
+      const diagnosis ={
         clinic: clinicId,
         user: userId,
         pdfPath: req.file.path // Save the file path
-      });
+      };
 
-      await diagnosis.save();
+      user.numPendingNotifications++;
+      user.pendingDiagnosis.push(diagnosis);
+      await user.save();
 
       res.status(201).json(diagnosis);
     } catch (error) {
