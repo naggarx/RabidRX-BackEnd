@@ -65,7 +65,7 @@ exports.acceptDiagnosis = async (req, res) => {
         user.pendingDiagnosis = user.pendingDiagnosis.filter(el => el._id != req.params.id);
         await user.save();
   
-        res.status(200).send('Diagnosis rejected successfully');
+        res.status(200).json({'message':'Diagnosis rejected successfully'});
     } catch (error) {
       res.status(500).send(error.toString());
     }

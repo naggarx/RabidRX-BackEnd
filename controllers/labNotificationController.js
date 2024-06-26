@@ -69,7 +69,7 @@ exports.acceptMedicalAnalysis = async (req, res) => {
         user.pendingMedicalAnalysis = user.pendingMedicalAnalysis.filter(el => el._id != req.params.id);
         await user.save();
   
-        res.status(200).send('Medical analysis rejected successfully');
+        res.status(200).json({'message':'Medical analysis rejected successfully'});
     } catch (error) {
       res.status(500).send(error.toString());
     }
