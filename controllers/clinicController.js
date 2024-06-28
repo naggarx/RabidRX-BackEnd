@@ -126,7 +126,6 @@ exports.uploadDiagnosis = [
       // Create a new diagnosis
       const diagnosis ={
         clinic: clinicId,
-        user: userId,
         pdfPath: req.file.path // Save the file path
       };
 
@@ -135,6 +134,41 @@ exports.uploadDiagnosis = [
       await user.save();
 
       res.status(201).json(diagnosis);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+];
+
+// uploadMedicalAnalysis ----> Abdo http://localhost:3000/clinics/:clinicId/users/:userId/medicalAnalysis
+exports.uploadMedicalAnalysis = [
+  upload.single('pdf'),
+  async (req, res) => {
+    try {
+     
+      const { clinicId, userId } = req.params;
+      //console.log(clinicId+" -------->>>> "+userId);
+      // Ensure the lab and user exist
+      const { testname } = req.body; 
+      const clinic = await Clinic.findById(clinicId);
+      const user = await User.findById(userId);
+
+      if (!clinic || !user) {
+        return res.status(404).json({ message: 'Institution or User not found' });
+      }
+      
+      // Create a new medical Analysis
+      const Medicalanalysis = {
+        id: clinicId,
+        type:'clinic',
+        testName:testname,
+        pdfPath: req.file.path, // Save the file path
+      };
+      user.numPendingNotifications++;
+      user.pendingMedicalAnalysis.push(Medicalanalysis);
+      await user.save();
+
+      res.status(201).json(Medicalanalysis);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

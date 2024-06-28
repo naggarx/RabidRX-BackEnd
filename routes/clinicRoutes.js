@@ -18,5 +18,6 @@ router.delete('/:id', adminAuthMiddleware, authorizeAdmin, clinicController.dele
 router.post('/signin', clinicController.signIn);
 
 router.post('/:clinicId/users/:userId/diagnoses', clinicController.uploadDiagnosis);
+router.post('/:clinicId/users/:userId/medicalAnalysis',clinicController.uploadMedicalAnalysis);
 
 module.exports = router;
