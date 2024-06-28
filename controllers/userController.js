@@ -154,6 +154,7 @@ const predictDiabetes = async(req, res) => {
   try {
     const authHeader = req.headers['token'];
     const token =authHeader.split(' ')[1];
+   
     const { bmi, blood_glucose_level, HbA1c_level, smoking_history } = req.body;
 
     // Fetch additional data from user database

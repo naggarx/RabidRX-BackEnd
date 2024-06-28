@@ -124,13 +124,13 @@ exports.uploadMedicalAnalysis = [
       const user = await User.findById(userId);
 
       if (!lab || !user) {
-        return res.status(404).json({ message: 'Lab or User not found' });
+        return res.status(404).json({ message: 'Institution or User not found' });
       }
 
       // Create a new medical Analysis
       const Medicalanalysis = {
-        lab: labId,
-        user: userId,
+        id: labId,
+        type:'lab',
         testName:testname,
         pdfPath: req.file.path, // Save the file path
       };

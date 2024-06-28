@@ -21,8 +21,8 @@ const EmergencyContactSchema = new mongoose.Schema({
 });
 
 const MedicalAnalysisSchema = new mongoose.Schema({
-    lab: { type: mongoose.Schema.Types.ObjectId, ref: 'Lab', required: true },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    id:{ type:String ,required: true },
+    type:{type:String},
     testName:String,
     pdfPath: { type: String, required: true }, // Field to store the path or URL of the uploaded PDF
     date: { type: Date, default: Date.now },
@@ -30,7 +30,6 @@ const MedicalAnalysisSchema = new mongoose.Schema({
 
 const DiagnosisSchema = new mongoose.Schema({
     clinic: { type: mongoose.Schema.Types.ObjectId, ref: 'Clinic', required: true },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     pdfPath: { type: String, required: true }, // Field to store the path or URL of the uploaded PDF
     date: { type: Date, default: Date.now },
   });
