@@ -2,10 +2,11 @@ const express = require('express');
 const UserController = require('../controllers/userController');
 const AuthController = require('../controllers/authController');
 const authMiddleware = require('../middlewares/authMiddleware');
+const upload = require('../middlewares/multer');
 const router = express.Router();
 
 // Define your routes here
-router.post('/register', UserController.createUser);
+router.post('/register', upload, UserController.createUser);
 router.put('/updatePassword', UserController.updatePassword);
 router.put('/updateProfile', UserController.updateProfile);
 router.put('/logout', UserController.logout);
