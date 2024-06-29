@@ -149,6 +149,44 @@ const getId = async (req, res) => {
 }
 
 
+const getMedicalAnalysis = async (req, res) => { 
+  try {
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1]; 
+    if (!token) return res.status(400).json({ 'message': 'token expired or not found' });
+
+    const foundUser = await User.findOne({ token }).exec();
+
+    if (!foundUser) {
+      return res.status(400).json({ 'message': 'User not found' });
+    }
+
+    res.status(200).json({'medicalAnalysis':foundUser.medicalAnalysis});
+  } catch (err) {
+    res.status(500).json({ 'message': 'Server error' });
+  }
+}
+
+
+const getDiagnosis = async (req, res) => { 
+  try {
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1]; 
+    if (!token) return res.status(400).json({ 'message': 'token expired or not found' });
+
+    const foundUser = await User.findOne({ token }).exec();
+
+    if (!foundUser) {
+      return res.status(400).json({ 'message': 'User not found' });
+    }
+
+    res.status(200).json({'diagnosis':foundUser.diagnosis});
+  } catch (err) {
+    res.status(500).json({ 'message': 'Server error' });
+  }
+}
+
+
 
 const predictDiabetes = async(req, res) => {
   try {
@@ -248,5 +286,7 @@ module.exports = {
     logout,
     predictDiabetes,
     getId,
-    getNumOfNotification
+    getNumOfNotification,
+    getMedicalAnalysis,
+    getDiagnosis
 };

@@ -111,7 +111,7 @@ exports.signIn = async (req, res) => {
     const token = jwt.sign({ id: lab._id }, jwtSecret, { expiresIn: '1h' });
     lab.token=token; 
     await lab.save();
-    res.status(200).json({'signin successfully':token});
+    res.status(200).json({'token':token});
   } catch (error) {
     res.status(500).send(error);
   }

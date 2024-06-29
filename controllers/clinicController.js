@@ -93,7 +93,7 @@ exports.signIn = async (req, res) => {
     const token = jwt.sign({ id: clinic._id }, jwtSecret, { expiresIn: '1h' });
     clinic.token=token; 
     await clinic.save();
-    res.status(200).send({ token });
+    res.status(200).json({'token':token});
   } catch (error) {
     res.status(500).send(error);
   }
