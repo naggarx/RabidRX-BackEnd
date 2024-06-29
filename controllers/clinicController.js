@@ -50,6 +50,11 @@ exports.getClinicById = async (req, res) => {
 
 exports.updateClinic = async (req, res) => {
   try {
+    
+    if (req.body.password) {
+      const saltH = 10;
+      req.body.password = await bcrypt.hash(req.body.password, saltH);
+    }
     const clinic = await Clinic.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!clinic) {
       return res.status(404).send();
@@ -88,14 +93,14 @@ exports.signIn = async (req, res) => {
     const token = jwt.sign({ id: clinic._id }, jwtSecret, { expiresIn: '1h' });
     clinic.token=token; 
     await clinic.save();
-    res.status(200).send({ token });
+    res.status(200).json({'token':token});
   } catch (error) {
     res.status(500).send(error);
   }
 };
 
 // get id of clinic ----> Abdo
-exports.getId = async (req, res) => {
+exports.getClinicByToken = async (req, res) => {
   try {
     const authHeader = req.headers['token'];
     const token =authHeader.split(' ')[1];
@@ -103,7 +108,7 @@ exports.getId = async (req, res) => {
     if (!clinic) {
       return res.status(404).send();
     }
-    res.status(200).json({'id':clinic._id});
+    res.status(200).json({clinic});
   } catch (error) {
     res.status(500).send(error);
   }

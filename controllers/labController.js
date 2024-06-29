@@ -80,15 +80,17 @@ exports.deleteLab = async (req, res) => {
   }
 };
 // get id of lab ----> Abdo
-exports.getId = async (req, res) => {
+exports.getLabByToken = async (req, res) => {
   try {
+
+    
     const authHeader = req.headers['token'];
     const token =authHeader.split(' ')[1];
     const lab = await Lab.findOne({ token }).exec();
     if (!lab) {
       return res.status(404).send();
     }
-    res.status(200).json({'id':lab._id});
+    res.status(200).json({lab});
   } catch (error) {
     res.status(500).send(error);
   }
@@ -109,7 +111,7 @@ exports.signIn = async (req, res) => {
     const token = jwt.sign({ id: lab._id }, jwtSecret, { expiresIn: '1h' });
     lab.token=token; 
     await lab.save();
-    res.status(200).json({'signin successfully':token});
+    res.status(200).json({'token':token});
   } catch (error) {
     res.status(500).send(error);
   }
