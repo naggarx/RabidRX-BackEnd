@@ -82,6 +82,8 @@ exports.deleteLab = async (req, res) => {
 // get id of lab ----> Abdo
 exports.getLabByToken = async (req, res) => {
   try {
+
+    
     const authHeader = req.headers['token'];
     const token =authHeader.split(' ')[1];
     const lab = await Lab.findOne({ token }).exec();

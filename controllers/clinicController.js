@@ -50,6 +50,7 @@ exports.getClinicById = async (req, res) => {
 
 exports.updateClinic = async (req, res) => {
   try {
+    
     if (req.body.password) {
       const salt = 10;
       req.body.password = await bcrypt.hash(req.body.password, salt);
