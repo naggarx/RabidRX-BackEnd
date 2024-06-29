@@ -52,8 +52,8 @@ exports.updateClinic = async (req, res) => {
   try {
     
     if (req.body.password) {
-      const salt = 10;
-      req.body.password = await bcrypt.hash(req.body.password, salt);
+      const saltH = 10;
+      req.body.password = await bcrypt.hash(req.body.password, saltH);
     }
     const clinic = await Clinic.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!clinic) {
