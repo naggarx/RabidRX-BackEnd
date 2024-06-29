@@ -54,6 +54,10 @@ exports.getLabById = async (req, res) => {
 
 exports.updateLab = async (req, res) => {
   try {
+    if (req.body.password) {
+      const salt = 10;
+      req.body.password = await bcrypt.hash(req.body.password, salt);
+    }
     const lab = await Lab.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!lab) {
       return res.status(404).send();
