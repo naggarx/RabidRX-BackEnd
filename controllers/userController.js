@@ -21,14 +21,13 @@ const createUser = async (req, res) => {
           maritalStatus, 
           weight, 
           height, 
-          bloodType,
-          personalMedicalHistory,
-          personalSurgicalHistory,
-          personalAllergiesHistory,
-          familyMedicalHistory,
-          emergencyContacts 
+          bloodType
       } = req.body;
-
+      const personalMedicalHistory = JSON.parse(req.body.personalMedicalHistory);
+      const personalSurgicalHistory = JSON.parse(req.body.personalSurgicalHistory);
+      const personalAllergiesHistory = JSON.parse(req.body.personalAllergiesHistory);
+      const familyMedicalHistory = JSON.parse(req.body.familyMedicalHistory);
+      const emergencyContacts = JSON.parse(req.body.emergencyContacts);
       const newUser = new User({
           firstName,
           lastName,
