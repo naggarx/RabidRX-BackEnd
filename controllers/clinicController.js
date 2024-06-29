@@ -50,6 +50,10 @@ exports.getClinicById = async (req, res) => {
 
 exports.updateClinic = async (req, res) => {
   try {
+    if (req.body.password) {
+      const salt = 10;
+      req.body.password = await bcrypt.hash(req.body.password, salt);
+    }
     const clinic = await Clinic.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!clinic) {
       return res.status(404).send();
@@ -95,7 +99,7 @@ exports.signIn = async (req, res) => {
 };
 
 // get id of clinic ----> Abdo
-exports.getId = async (req, res) => {
+exports.getClinicByToken = async (req, res) => {
   try {
     const authHeader = req.headers['token'];
     const token =authHeader.split(' ')[1];
@@ -103,7 +107,7 @@ exports.getId = async (req, res) => {
     if (!clinic) {
       return res.status(404).send();
     }
-    res.status(200).json({'id':clinic._id});
+    res.status(200).json({clinic});
   } catch (error) {
     res.status(500).send(error);
   }

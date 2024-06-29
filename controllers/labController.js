@@ -80,7 +80,7 @@ exports.deleteLab = async (req, res) => {
   }
 };
 // get id of lab ----> Abdo
-exports.getId = async (req, res) => {
+exports.getLabByToken = async (req, res) => {
   try {
     const authHeader = req.headers['token'];
     const token =authHeader.split(' ')[1];
@@ -88,7 +88,7 @@ exports.getId = async (req, res) => {
     if (!lab) {
       return res.status(404).send();
     }
-    res.status(200).json({'id':lab._id});
+    res.status(200).json({lab});
   } catch (error) {
     res.status(500).send(error);
   }
