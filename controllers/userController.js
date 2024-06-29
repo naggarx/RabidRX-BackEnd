@@ -3,7 +3,7 @@ const { exec } = require('child_process');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const { spawn } = require('child_process');
-
+const upload = require('../middlewares/multer');
 const { use } = require('../routes/userRoutes');
 
 
@@ -46,7 +46,8 @@ const createUser = async (req, res) => {
           personalSurgicalHistory,
           personalAllergiesHistory,
           familyMedicalHistory,
-          emergencyContacts
+          emergencyContacts,
+          profileImage: req.file.path
       });
 
       const savedUser = await newUser.save();
