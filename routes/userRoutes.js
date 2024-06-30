@@ -6,7 +6,7 @@ const upload = require('../middlewares/multer');
 const router = express.Router();
 
 // Define your routes here
-router.post('/register', upload.single('profileImage'), UserController.createUser);
+router.post('/register', UserController.createUser);
 router.put('/updatePassword', UserController.updatePassword);
 router.put('/updateProfile', UserController.updateProfile);
 router.put('/logout', UserController.logout);

@@ -46,7 +46,7 @@ const createUser = async (req, res) => {
           personalAllergiesHistory,
           familyMedicalHistory,
           emergencyContacts,
-          profileImage: req.file.path
+          //profileImage: req.file.path
       });
 
       const savedUser = await newUser.save();
