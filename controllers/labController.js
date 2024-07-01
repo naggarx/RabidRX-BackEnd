@@ -130,7 +130,7 @@ exports.getRate = async (req, res) => {
     lab.rate = lab.calculateRate();
     await lab.save();
 
-    res.status(200).json({"message": "Rate changed"});
+    res.status(200).json({"rate": lab.rate});
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
