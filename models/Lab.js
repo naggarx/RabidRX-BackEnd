@@ -54,8 +54,20 @@ const LabSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  numOfEvaluation:{
+    type: Number,
+    default: 0
+  },
+  sumOfEvaluation: {
+    type: Number,
+    default: 0
+  },
+  rate: {
+    type: Number,
+    default: 0
   }
-  
+
 });
 
 LabSchema.pre('save', async function(next) {
@@ -73,6 +85,13 @@ LabSchema.pre('save', async function(next) {
 
 LabSchema.methods.comparePassword = async function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
+};
+
+LabSchema.methods.calculateRate = function () {
+  if (this.numOfEvaluation === 0) {
+    return 0;
+  }
+  return this.sumOfEvaluation / this.numOfEvaluation;
 };
 
 
