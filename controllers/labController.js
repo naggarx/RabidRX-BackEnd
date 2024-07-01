@@ -117,9 +117,11 @@ exports.signIn = async (req, res) => {
   }
 };
 
+
+
  
 
-// uploadMedicalAnalysis ----> Abdo http://localhost:3000/labs/:labId/users/:userId/medicalAnalysis
+// uploadMedicalAnalysis ---> Abdo http://localhost:3000/labs/:labId/users/:userId/medicalAnalysis
 exports.uploadMedicalAnalysis = [
   upload.single('pdf'),
   async (req, res) => {

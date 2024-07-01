@@ -232,6 +232,8 @@ const clinicEvaluation = async (req, res) => {
     if (!foundClinic) {
       return res.status(400).json({ 'message': 'Clinic not found' });
     }
+
+    
     foundClinic.numOfEvaluation++;
     foundClinic.sumOfEvaluation+=evaluation;
     foundClinic.rate = foundClinic.calculateRate();
