@@ -180,7 +180,20 @@ exports.uploadMedicalAnalysis = [
   }
 ];
 
-
+exports.userById = async (req, res) => {
+  try {
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1];
+    const clinic = await Clinic.findOne({ token }).exec();
+    const user=await User.findById(req.params.id).exec();
+    if (!clinic || !user) {
+      return res.sendStatus(400);
+    }
+    res.status(200).json({user});
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
 
 // logout --> Abdo
 exports.logout = async (req, res) => { 
