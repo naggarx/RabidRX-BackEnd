@@ -19,4 +19,5 @@ router.get('/medicalAnalysis', UserController.getMedicalAnalysis);
 router.get('/diagnosis', UserController.getDiagnosis);
 router.get('/profile', authMiddleware, UserController.viewProfile);
 router.post('/predict', UserController.predictDiabetes);
+router.get('/getall', UserController.getAllUsers);
 module.exports = router;
