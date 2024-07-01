@@ -117,26 +117,11 @@ exports.signIn = async (req, res) => {
   }
 };
 
-exports.getRate = async (req, res) => {
-  try {
-    const authHeader = req.headers['token'];
-    const token =authHeader.split(' ')[1];
-    const lab = await Lab.findOne({ token }).exec();
 
-    if (!lab) {
-      return res.status(404).send({ message: 'Lab not found' });
-    }
 
-    lab.rate = lab.calculateRate();
-    await lab.save();
+ 
 
-    res.status(200).json({"rate": lab.rate});
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-  }
-};
-
-// uploadMedicalAnalysis ----> Abdo http://localhost:3000/labs/:labId/users/:userId/medicalAnalysis
+// uploadMedicalAnalysis ---> Abdo http://localhost:3000/labs/:labId/users/:userId/medicalAnalysis
 exports.uploadMedicalAnalysis = [
   upload.single('pdf'),
   async (req, res) => {

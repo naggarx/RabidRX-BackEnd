@@ -207,6 +207,7 @@ const labEvaluation = async (req, res) => {
     }
     foundLab.numOfEvaluation++;
     foundLab.sumOfEvaluation+=evaluation; 
+    foundLab.rate = foundLab.calculateRate();
     await foundLab.save();
     res.status(200).json({'message':"lab evaluated successfully"});
   } catch (err) {
@@ -231,8 +232,11 @@ const clinicEvaluation = async (req, res) => {
     if (!foundClinic) {
       return res.status(400).json({ 'message': 'Clinic not found' });
     }
+
+    
     foundClinic.numOfEvaluation++;
     foundClinic.sumOfEvaluation+=evaluation;
+    foundClinic.rate = foundClinic.calculateRate();
     await foundClinic.save();
     res.status(200).json({'message':"Clinic evaluated successfully"});
   } catch (err) {
