@@ -194,7 +194,7 @@ exports.getRate = async (req, res) => {
     clinic.rate = clinic.calculateRate();
     await clinic.save();
 
-    res.status(200).json({"message": "Rate changed"});
+    res.status(200).json({"rate": clinic.rate});
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
