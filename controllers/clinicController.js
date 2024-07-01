@@ -180,6 +180,26 @@ exports.uploadMedicalAnalysis = [
   }
 ];
 
+
+exports.getRate = async (req, res) => {
+  try {
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1];
+    const clinic = await Clinic.findOne({ token }).exec();
+
+    if (!clinic) {
+      return res.status(404).send({ message: 'Clinic not found' });
+    }
+
+    clinic.rate = clinic.calculateRate();
+    await clinic.save();
+
+    res.status(200).json({"message": "Rate changed"});
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
 // logout --> Abdo
 exports.logout = async (req, res) => { 
   try {

@@ -7,6 +7,7 @@ const authorizeAdmin = require('../middlewares/authorizeAdmin');
 // Public routes to get all clinics and get a clinic by ID
 router.get('/', clinicController.getClinics);
 router.get('/getClinicByToken', clinicController.getClinicByToken);
+router.get('/rate', clinicController.getRate);
 router.get('/:id', clinicController.getClinicById);
 
 

@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const Lab= require('../models/Lab');
+const Clinic = require('../models/Clinic');
 const { exec } = require('child_process');
 const path = require('path');
 const bcrypt = require('bcryptjs');
@@ -21,13 +23,13 @@ const createUser = async (req, res) => {
           maritalStatus, 
           weight, 
           height, 
-          bloodType,
-          personalMedicalHistory,
-          personalSurgicalHistory,
-          personalAllergiesHistory,
-          familyMedicalHistory,
-          emergencyContacts 
+          bloodType
       } = req.body;
+      const personalMedicalHistory = JSON.parse(req.body.personalMedicalHistory);
+      const personalSurgicalHistory = JSON.parse(req.body.personalSurgicalHistory);
+      const personalAllergiesHistory = JSON.parse(req.body.personalAllergiesHistory);
+      const familyMedicalHistory = JSON.parse(req.body.familyMedicalHistory);
+      const emergencyContacts = JSON.parse(req.body.emergencyContacts);
       const newUser = new User({
           firstName,
           lastName,
@@ -46,7 +48,7 @@ const createUser = async (req, res) => {
           personalAllergiesHistory,
           familyMedicalHistory,
           emergencyContacts,
-          //profileImage: req.file.path
+          profileImage: req.file.path
       });
 
       const savedUser = await newUser.save();
@@ -187,6 +189,57 @@ const getDiagnosis = async (req, res) => {
 }
 
 
+const labEvaluation = async (req, res) => { 
+  try {
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1]; 
+    const labID=req.params.id;
+    const evaluation=req.body.evaluation;
+    
+    if (!token) return res.status(400).json({ 'message': 'token expired or not found' });
+    const foundUser = await User.findOne({ token }).exec();
+    const foundLab = await Lab.findById(labID).exec();
+    if (!foundUser) {
+      return res.status(400).json({ 'message': 'User not found' });
+    }
+    if (!foundLab) {
+      return res.status(400).json({ 'message': 'Lab not found' });
+    }
+    foundLab.numOfEvaluation++;
+    foundLab.sumOfEvaluation+=evaluation; 
+    await foundLab.save();
+    res.status(200).json({'message':"lab evaluated successfully"});
+  } catch (err) {
+    res.status(500).json({ 'message': 'Server error' });
+  }
+}
+
+
+const clinicEvaluation = async (req, res) => { 
+  try {
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1]; 
+    const clinicID=req.params.id;
+    const evaluation=req.body.evaluation;
+    
+    if (!token) return res.status(400).json({ 'message': 'token expired or not found' });
+    const foundUser = await User.findOne({ token }).exec();
+    const foundClinic = await Clinic.findById(clinicID).exec();
+    if (!foundUser) {
+      return res.status(400).json({ 'message': 'User not found' });
+    }
+    if (!foundClinic) {
+      return res.status(400).json({ 'message': 'Clinic not found' });
+    }
+    foundClinic.numOfEvaluation++;
+    foundClinic.sumOfEvaluation+=evaluation;
+    await foundClinic.save();
+    res.status(200).json({'message':"Clinic evaluated successfully"});
+  } catch (err) {
+    res.status(500).json({ 'message': 'Server error' });
+  }
+}
+
 
 const predictDiabetes = async(req, res) => {
   try {
@@ -288,5 +341,7 @@ module.exports = {
     getId,
     getNumOfNotification,
     getMedicalAnalysis,
-    getDiagnosis
+    getDiagnosis,
+    labEvaluation,
+    clinicEvaluation
 };

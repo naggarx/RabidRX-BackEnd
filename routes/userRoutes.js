@@ -9,6 +9,8 @@ const router = express.Router();
 router.post('/register', UserController.createUser);
 router.put('/updatePassword', UserController.updatePassword);
 router.put('/updateProfile', UserController.updateProfile);
+router.put('/labEvaluation/:id', UserController.labEvaluation);
+router.put('/clinicEvaluation/:id', UserController.clinicEvaluation);
 router.put('/logout', UserController.logout);
 router.post('/signin', AuthController.signIn);
 router.get('/getId', UserController.getId);

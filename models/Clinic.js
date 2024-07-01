@@ -55,7 +55,19 @@ const clinicSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  token:String
+  token:String,
+  numOfEvaluation:{
+    type: Number,
+    default: 0
+  },
+  sumOfEvaluation: {
+    type: Number,
+    default: 0
+  },
+  rate: {
+    type: Number,
+    default: 0
+  }
 });
 
 clinicSchema.pre('save', async function(next) {
@@ -73,6 +85,13 @@ clinicSchema.pre('save', async function(next) {
 
 clinicSchema.methods.comparePassword = async function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
+};
+
+clinicSchema.methods.calculateRate = function () {
+  if (this.numOfEvaluation === 0) {
+    return 0;
+  }
+  return this.sumOfEvaluation / this.numOfEvaluation;
 };
 
 
