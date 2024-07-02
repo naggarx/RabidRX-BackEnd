@@ -87,7 +87,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    //profileImage: { type: String },
+    profileImage: { type: String },
     personalMedicalHistory: {
         anemia: { type: Boolean, default: false },
         arthritis: { type: Boolean, default: false },
