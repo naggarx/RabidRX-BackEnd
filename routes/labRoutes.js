@@ -6,8 +6,7 @@ const authorizeAdmin = require('../middlewares/authorizeAdmin');
 
 // Public routes to get all clinics and get a clinic by ID
 router.get('/', labController.getLabs);
-router.get('/getLabByToken', labController.getLabByToken); 
-router.get('/userById/:id',labController.userById)
+router.get('/getLabByToken', labController.getLabByToken);  
 router.get('/:id', labController.getLabById);
 
 // Protected routes to create, update, or delete clinics

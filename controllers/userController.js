@@ -131,6 +131,22 @@ const getId = async (req, res) => {
   res.status(200).json({'id':foundUser._id});
 }
 
+const userById = async (req, res) => {
+  try {
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1];
+    const lab = await Lab.findOne({ token }).exec();
+    const clinic = await Clinic.findOne({ token }).exec();
+    const user=await User.findById(req.params.id).exec();
+    if (!user||(!lab&&!clinic)) {
+      return res.sendStatus(400);
+    }
+    res.status(200).json({user});
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
  //get number of pending notification
  const getNumOfNotification = async (req, res) => { 
   try {
@@ -357,5 +373,6 @@ module.exports = {
     getDiagnosis,
     labEvaluation,
     clinicEvaluation,
-    getAllUsers
+    getAllUsers,
+    userById
 };
