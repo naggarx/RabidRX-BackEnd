@@ -14,6 +14,7 @@ router.put('/clinicEvaluation/:id', UserController.clinicEvaluation);
 router.put('/logout', UserController.logout);
 router.post('/signin', AuthController.signIn);
 router.get('/getId', UserController.getId);
+router.get('/userById/:id', UserController.userById);
 router.get('/numOfNotification', UserController.getNumOfNotification);
 router.get('/medicalAnalysis', UserController.getMedicalAnalysis);
 router.get('/diagnosis', UserController.getDiagnosis);
