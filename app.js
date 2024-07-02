@@ -9,7 +9,7 @@ const labRoutes = require('./routes/labRoutes');
 const notificationRoutes=require('./routes/notificationRoutes');
 
 const app = express();
-
+app.use('/uploads/profile_images', express.static(path.join(__dirname, 'uploads/profile_images')));
 app.use(cors());
 app.use(bodyParser.json());
 

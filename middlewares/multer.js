@@ -1,6 +1,6 @@
 const multer = require('multer');
 const path = require('path');
-const destination='uploads/profile_images';
+const destination='uploads/profile_images/';
 
 const storage = multer.diskStorage({
   destination: destination,
