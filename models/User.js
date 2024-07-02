@@ -165,8 +165,8 @@ const UserSchema = new mongoose.Schema({
     pendingMedicalAnalysis:[MedicalAnalysisSchema],
     diagnosis:[DiagnosisSchema],
     pendingDiagnosis:[DiagnosisSchema],
-    numPendingNotifications:{type:Number,default:0}
-
+    numPendingNotifications:{type:Number,default:0},
+    fileUrl: { type: String }
 });
 
 // Hash password before saving
