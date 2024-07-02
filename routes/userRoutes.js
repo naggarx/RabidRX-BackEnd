@@ -5,8 +5,10 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const upload = require('../middlewares/multer');
 const router = express.Router();
 
-// Define your routes here
-router.post('/register', UserController.createUser);
+ 
+
+// Define your routes here 
+router.post('/register',upload.single("profile_images"),UserController.createUser);
 router.put('/updatePassword', UserController.updatePassword);
 router.put('/updateProfile', UserController.updateProfile);
 router.put('/labEvaluation/:id', UserController.labEvaluation);
