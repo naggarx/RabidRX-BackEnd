@@ -48,9 +48,9 @@ const createUser = async (req, res) => {
           personalAllergiesHistory,
           familyMedicalHistory,
           emergencyContacts,
-          profileImage:  req.file ? req.file.path : null
+          profileImage:  req.file ? req.file.path : null,
+          fileUrl : `${req.protocol}://${req.get('host')}/uploads/profile_images/${req.file.filename}`
       });
-
       const savedUser = await newUser.save();
       res.status(201).json(savedUser);
   } catch (error) {
