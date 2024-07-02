@@ -48,7 +48,7 @@ const createUser = async (req, res) => {
           personalAllergiesHistory,
           familyMedicalHistory,
           emergencyContacts,
-          profileImage: req.file.path
+          profileImage:  req.file ? req.file.path : null
       });
 
       const savedUser = await newUser.save();
@@ -360,6 +360,9 @@ const logout = async (req, res) => {
   }
 };
 
+
+ 
+
 module.exports = {
     createUser,
     viewProfile,
@@ -374,5 +377,5 @@ module.exports = {
     labEvaluation,
     clinicEvaluation,
     getAllUsers,
-    userById
+    userById,
 };

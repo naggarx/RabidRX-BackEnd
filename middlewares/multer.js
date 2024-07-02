@@ -1,22 +1,22 @@
 const multer = require('multer');
 const path = require('path');
+const destination='uploads/profile_images';
 
-// Set storage engine
 const storage = multer.diskStorage({
-    destination: './uploads/profile_images/',
-    filename: function(req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
+  destination: destination,
+  filename:(req, file, cb)=>{
+      return cb(null, `${file.fieldname}_${Date.now()}_${path.extname(file.originalname)}`);
+  }
 });
 
-// Initialize upload
 const upload = multer({
-    storage: storage,
-    limits: { fileSize: 10000000 }, // file size to 10MB
-    fileFilter: function(req, file, cb) {
-        checkFileType(file, cb);
-    }
+  storage: storage,
+  limits: { fileSize: 200000000 },
+  fileFilter: function(req, file, cb) {
+    checkFileType(file, cb);
+}
 });
+    
 
 // Check file type
 function checkFileType(file, cb) {
