@@ -7,7 +7,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const clinicRoutes = require('./routes/clinicRoutes');
 const labRoutes = require('./routes/labRoutes');
 const notificationRoutes=require('./routes/notificationRoutes');
-
+const path = require('path');
 const app = express();
 app.use('/uploads/profile_images', express.static(path.join(__dirname, 'uploads/profile_images')));
 app.use(cors());
