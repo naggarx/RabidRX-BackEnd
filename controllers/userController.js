@@ -110,6 +110,12 @@ const updateProfile = async (req, res) => {
       runValidators: true 
     });
 
+    if(req.file){
+      updatedUser. profileImage=  req.file ? req.file.path : null;
+      updatedUser.fileUrl= `${req.protocol}://${req.get('host')}/uploads/profile_images/${req.file.filename}`;
+      await updatedUser.save();
+    }
+
     if (!updatedUser) {
       return res.status(404).json({ 'message': 'User not found' });
     }
