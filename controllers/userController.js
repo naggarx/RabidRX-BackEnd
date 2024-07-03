@@ -109,18 +109,28 @@ const updateProfile = async (req, res) => {
       new: true,  
       runValidators: true 
     });
-
-    if(req.file){
-      updatedUser. profileImage=  req.file ? req.file.path : null;
-      updatedUser.fileUrl= `${req.protocol}://${req.get('host')}/uploads/profile_images/${req.file.filename}`;
-      await updatedUser.save();
-    }
-
     if (!updatedUser) {
       return res.status(404).json({ 'message': 'User not found' });
     }
 
     res.status(200).json({'message': 'updated successfully'}); 
+  } catch (err) { 
+    res.status(500).json({ 'message': 'Server error' });
+  }
+};
+
+
+const updateImage=  async (req, res) => {
+  try {
+    const authHeader = req.headers['token'];
+    const token =authHeader.split(' ')[1]; 
+    const user =await User.findOne({ token }).exec();
+    if (!req.file) {
+      return res.status(400).send('No file uploaded.');
+    }
+    user.fileUrl = `${req.protocol}://${req.get('host')}/uploads/profile_images/${req.file.filename}`;
+    await user.save();
+    res.status(200).json({'message': fileUrl}); 
   } catch (err) { 
     res.status(500).json({ 'message': 'Server error' });
   }
@@ -384,4 +394,5 @@ module.exports = {
     clinicEvaluation,
     getAllUsers,
     userById,
+    updateImage
 };

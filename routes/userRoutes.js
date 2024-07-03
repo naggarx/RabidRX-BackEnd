@@ -9,7 +9,8 @@ const router = express.Router();
 
 // Define your routes here 
 router.post('/register',upload.single("profile_images"),UserController.createUser);
-router.put('/updatePassword', UserController.updatePassword);
+router.put('/updatePassword',UserController.updatePassword);
+router.put('/updateImage',upload.single("profile_images"),UserController.updateImage);
 router.put('/updateProfile', UserController.updateProfile);
 router.put('/labEvaluation/:id', UserController.labEvaluation);
 router.put('/clinicEvaluation/:id', UserController.clinicEvaluation);
