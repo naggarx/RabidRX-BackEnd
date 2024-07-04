@@ -122,9 +122,7 @@ exports.signIn = async (req, res) => {
  
 
 // uploadMedicalAnalysis ---> Abdo http://localhost:3000/labs/:labId/users/:userId/medicalAnalysis
-exports.uploadMedicalAnalysis = [
-  upload.single('pdf'),
-  async (req, res) => {
+exports.uploadMedicalAnalysis =async (req, res) => {
     try {
       const { labId, userId } = req.params;
       // Ensure the lab and user exist
@@ -135,6 +133,7 @@ exports.uploadMedicalAnalysis = [
       if (!lab || !user) {
         return res.status(404).json({ message: 'Institution or User not found' });
       }
+      const fileurl = `${req.protocol}://${req.get('host')}/uploads/profile_images/${req.file.filename}`
 
       // Create a new medical Analysis
       const Medicalanalysis = {
@@ -142,6 +141,7 @@ exports.uploadMedicalAnalysis = [
         type:'lab',
         testName:testname,
         pdfPath: req.file.path, // Save the file path
+        fileUrl:fileurl
       };
       user.numPendingNotifications++;
       user.pendingMedicalAnalysis.push(Medicalanalysis);
@@ -152,7 +152,6 @@ exports.uploadMedicalAnalysis = [
       res.status(500).json({ message: error.message });
     }
   }
-];
 
 
 // logout --> Abdo
