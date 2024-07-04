@@ -347,6 +347,18 @@ const predictDiabetes = async(req, res) => {
     res.status(500).json({ error: 'Internal server error' });
 }
 };
+// get user by qr
+const userByQr = async (req, res) => {
+  try {
+    const user=await User.findById(req.params.id).exec();
+    if (!user) {
+      return res.sendStatus(400);
+    }
+    res.status(200).json({user});
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
 
 // logout --> Abdo
 const logout = async (req, res) => { 
@@ -394,5 +406,6 @@ module.exports = {
     clinicEvaluation,
     getAllUsers,
     userById,
-    updateImage
+    updateImage,
+    userByQr
 };
