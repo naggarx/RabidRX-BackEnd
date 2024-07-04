@@ -18,6 +18,7 @@ router.put('/logout', UserController.logout);
 router.post('/signin', AuthController.signIn);
 router.get('/getId', UserController.getId);
 router.get('/userById/:id', UserController.userById);
+router.get('/userByQr/:id', UserController.userByQr);
 router.get('/numOfNotification', UserController.getNumOfNotification);
 router.get('/medicalAnalysis', UserController.getMedicalAnalysis);
 router.get('/diagnosis', UserController.getDiagnosis);
