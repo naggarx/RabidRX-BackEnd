@@ -114,9 +114,7 @@ exports.getClinicByToken = async (req, res) => {
   }
 };
 
-exports.uploadDiagnosis = [
-  upload.single('pdf'),
-  async (req, res) => {
+exports.uploadDiagnosis =async (req, res) => {
     try {
       const { clinicId, userId } = req.params;
 
@@ -127,11 +125,13 @@ exports.uploadDiagnosis = [
       if (!clinic || !user) {
         return res.status(404).json({ message: 'Clinic or User not found' });
       }
+      const fileurl = `${req.protocol}://${req.get('host')}/uploads/profile_images/${req.file.filename}`
 
       // Create a new diagnosis
       const diagnosis ={
         clinic: clinicId,
-        pdfPath: req.file.path // Save the file path
+        pdfPath: req.file.path,// Save the file path
+        fileUrl:fileurl
       };
 
       user.numPendingNotifications++;
@@ -143,12 +143,10 @@ exports.uploadDiagnosis = [
       res.status(500).json({ message: error.message });
     }
   }
-];
+
 
 // uploadMedicalAnalysis ----> Abdo http://localhost:3000/clinics/:clinicId/users/:userId/medicalAnalysis
-exports.uploadMedicalAnalysis = [
-  upload.single('pdf'),
-  async (req, res) => {
+exports.uploadMedicalAnalysis= async (req, res) => {
     try {
      
       const { clinicId, userId } = req.params;
@@ -161,6 +159,7 @@ exports.uploadMedicalAnalysis = [
       if (!clinic || !user) {
         return res.status(404).json({ message: 'Institution or User not found' });
       }
+      const fileurl = `${req.protocol}://${req.get('host')}/uploads/profile_images/${req.file.filename}`
       
       // Create a new medical Analysis
       const Medicalanalysis = {
@@ -168,6 +167,7 @@ exports.uploadMedicalAnalysis = [
         type:'clinic',
         testName:testname,
         pdfPath: req.file.path, // Save the file path
+        fileUrl:fileurl
       };
       user.numPendingNotifications++;
       user.pendingMedicalAnalysis.push(Medicalanalysis);
@@ -178,7 +178,6 @@ exports.uploadMedicalAnalysis = [
       res.status(500).json({ message: error.message });
     }
   }
-];
 
 // logout --> Abdo
 exports.logout = async (req, res) => { 

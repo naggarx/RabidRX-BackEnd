@@ -67,7 +67,6 @@ const LabSchema = new mongoose.Schema({
     type: Number,
     default: 0
   }
-
 });
 
 LabSchema.pre('save', async function(next) {

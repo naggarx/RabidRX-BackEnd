@@ -26,12 +26,14 @@ const MedicalAnalysisSchema = new mongoose.Schema({
     testName:String,
     pdfPath: { type: String, required: true }, // Field to store the path or URL of the uploaded PDF
     date: { type: Date, default: Date.now },
+    fileUrl: { type: String }
 });
 
 const DiagnosisSchema = new mongoose.Schema({
     clinic: { type: mongoose.Schema.Types.ObjectId, ref: 'Clinic', required: true },
     pdfPath: { type: String, required: true }, // Field to store the path or URL of the uploaded PDF
     date: { type: Date, default: Date.now },
+    fileUrl: { type: String }
   });
 
 const UserSchema = new mongoose.Schema({
