@@ -8,12 +8,12 @@ const secretKey = process.env.SECRET_KEY;
 exports.login = async (req, res) => {
   const { username, password } = req.body;
   if (username !== adminUsername) {
-    return res.status(400).send('Invalid username or password.');
+    return res.status(400).send('Invalid username');
   }
 
   const validPassword = await bcrypt.compare(password, adminPasswordHash);
   if (!validPassword) {
-    return res.status(400).send('Invalid username or password.');
+    return res.status(400).send('Invalid password');
   }
 
   const token = jwt.sign({ username: adminUsername, role: 'admin' }, secretKey, { expiresIn: '1h' });

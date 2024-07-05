@@ -23,7 +23,7 @@ exports.createClinic = async (req, res) => {
     await clinic.save();
     res.status(201).send(clinic);
   } catch (error) {
-    res.status(400).send(error);
+    res.status(400).json({ message: 'Invalid' });
   }
 };
 
@@ -83,12 +83,12 @@ exports.signIn = async (req, res) => {
 
     const clinic = await Clinic.findOne({ username });
     if (!clinic) {
-      return res.status(404).send({ error: 'Invalid username or password' });
+      return res.status(404).send({ error: 'Invalid username' });
     }
 
     const isMatch = await clinic.comparePassword(password);
     if (!isMatch) {
-      return res.status(404).send({ error: 'Invalid username or password' });
+      return res.status(404).send({ error: 'Invalid password' });
     }
     const token = jwt.sign({ id: clinic._id }, jwtSecret, { expiresIn: '1h' });
     clinic.token=token; 
@@ -122,8 +122,11 @@ exports.uploadDiagnosis =async (req, res) => {
       const clinic = await Clinic.findById(clinicId);
       const user = await User.findById(userId);
 
-      if (!clinic || !user) {
-        return res.status(404).json({ message: 'Clinic or User not found' });
+      if (!clinic ) {
+        return res.status(404).json({ message: 'Clinic not found' });
+      }
+      if ( !user) {
+        return res.status(404).json({ message: 'User not found' });
       }
       const fileurl = `${req.protocol}://${req.get('host')}/uploads/profile_images/${req.file.filename}`
 
@@ -156,8 +159,11 @@ exports.uploadMedicalAnalysis= async (req, res) => {
       const clinic = await Clinic.findById(clinicId);
       const user = await User.findById(userId);
 
-      if (!clinic || !user) {
-        return res.status(404).json({ message: 'Institution or User not found' });
+      if (!clinic ) {
+        return res.status(404).json({ message: 'Clinic not found' });
+      }
+      if ( !user) {
+        return res.status(404).json({ message: 'User not found' });
       }
       const fileurl = `${req.protocol}://${req.get('host')}/uploads/profile_images/${req.file.filename}`
       

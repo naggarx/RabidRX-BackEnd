@@ -27,7 +27,7 @@ exports.createLab = async (req, res) => {
     await lab.save();
     res.status(201).send(lab);
   } catch (error) {
-    res.status(400).send(error);
+    res.status(400).json({ message: 'Invalid' });
   }
 };
 
@@ -101,12 +101,12 @@ exports.signIn = async (req, res) => {
     const { username, password } = req.body;
     const lab = await Lab.findOne({ username });
     if (!lab) {
-      return res.status(404).send({ error: 'Invalid username or password' });
+      return res.status(404).send({ error: 'Invalid username' });
     }
 
     const isMatch = await lab.comparePassword(password);
     if (!isMatch) {
-      return res.status(404).send({ error: 'Invalid username or password' });
+      return res.status(404).send({ error: 'Invalid password' });
     }
     const token = jwt.sign({ id: lab._id }, jwtSecret, { expiresIn: '1h' });
     lab.token=token; 
@@ -130,8 +130,11 @@ exports.uploadMedicalAnalysis =async (req, res) => {
       const lab = await Lab.findById(labId);
       const user = await User.findById(userId);
 
-      if (!lab || !user) {
-        return res.status(404).json({ message: 'Institution or User not found' });
+      if (!lab ) {
+        return res.status(404).json({ message: 'lab not found' });
+      }
+      if ( !user) {
+        return res.status(404).json({ message: 'User not found' });
       }
       const fileurl = `${req.protocol}://${req.get('host')}/uploads/profile_images/${req.file.filename}`
 
