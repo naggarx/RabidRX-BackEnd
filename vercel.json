@@ -2,18 +2,16 @@
   "version": 2,
   "builds": [
     {
-      "src": "python/diabetesPredict.py",
-      "use": "@vercel/python"
+      "src": "app.js",
+      "use": "@vercel/node"
     },
     {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
+      "src": "python/diabetesPredict.py",
+      "use": "@vercel/python"
     }
   ],
   "routes": [
-    {
-      "src": "/diabetes-predict",
-      "dest": "python/diabetesPredict.py"
-    }
+    { "src": "/api/diabetes-predict", "dest": "python/diabetesPredict.py" },
+    { "src": "/(.*)", "dest": "app.js" }
   ]
 }
