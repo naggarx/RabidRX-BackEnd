@@ -6,12 +6,12 @@
       "use": "@vercel/node"
     },
     {
-      "src": "python/diabetesPredict.py",
+      "src": "./python/diabetesPredict.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
-    { "src": "/api/diabetes-predict", "dest": "python/diabetesPredict.py" },
+    { "src": "/users/predict", "dest": "./python/diabetesPredict.py" },
     { "src": "/(.*)", "dest": "app.js" }
   ]
 }
