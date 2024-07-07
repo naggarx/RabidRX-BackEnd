@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs');
 const { spawn } = require('child_process');
 const upload = require('../middlewares/multer');
 const { use } = require('../routes/userRoutes');
-const axios = require('axios');
+
 
 const createUser = async (req, res) => {
   try {
@@ -276,121 +276,77 @@ const clinicEvaluation = async (req, res) => {
   }
 }
 
-const predictDiabetes = async (req, res) => {
-  try {
-    // console.log('Received data:', req.body); 
 
+const predictDiabetes = async(req, res) => {
+  try {
     const authHeader = req.headers['token'];
-    if (!authHeader) {
-      return res.status(401).json({ error: 'Authorization header missing or invalid' });
+    const token =authHeader.split(' ')[1];
+   
+    const { bmi, blood_glucose_level, HbA1c_level, smoking_history } = req.body;
+
+    // Fetch additional data from user database
+    const user = await User.findOne({ token }).exec();
+    if (!user) {
+        return res.status(500).json({ error: 'User not found' });
     }
+      const inputData = {
+          bmi,
+          blood_glucose_level,
+          HbA1c_level,
+          smoking_history,
+          gender: user.gender,
+          age: user.age,
+          hypertension: user.personalMedicalHistory.hypertension,
+          heart_disease: user.personalMedicalHistory.heartDisease
+      };
+      
+      const pythonScriptPath = path.join(__dirname, '../python/diabetesPredict.py');
+
+      // Execute the Python 
+      const pythonProcess = exec(`python ${pythonScriptPath}`, (error, stdout, stderr) => {
     
-    const token = authHeader.split(' ')[1];
+        if (error) {
+            console.error(`exec error: ${error}`);
+            return res.status(500).json({ error: 'Error in prediction' });
+        }
+        try {
+          //Extract output and send message
+          const lines = stdout.trim().split('\n');
+          const lastLine = lines[lines.length - 1];
+          const result = JSON.parse(lastLine.replace(/'/g, '"').replace('array', '["array"]').replace('dtype=float32', ']').replace(/'/g, '"').replace(/ \], /, '"], '));
+          const prediction = result.prediction;
+          if (!prediction || prediction.length !== 2) 
+            {
+              throw new Error('Invalid prediction format');
+            }
 
-    // Fetch additional data from user database
-    const user = await User.findOne({ token }).exec();
-    if (!user) {
-      return res.status(500).json({ error: 'User not found' });
-    }
+          const [notDiabetes, diabetes] = prediction;
+          let message;
 
-    const { bmi, blood_glucose_level, HbA1c_level, smoking_history } = req.body;
+          if (notDiabetes > diabetes) 
+            {
+              message = `Prediction: Not Diabetes with ${(notDiabetes * 100).toFixed(2)}% certainty`;
+            } 
+          else 
+            {
+              message = `Prediction: Diabetes with ${(diabetes * 100).toFixed(2)}% certainty`;
+            }
+          
+          res.json({ message });
+        } 
+        catch (parseError) {
+            console.error(`parse error: ${parseError}`);
+            res.status(500).json({ error: 'Error parsing prediction result' });
+        }
+    });
+    pythonProcess.stdin.write(JSON.stringify(inputData));
+    pythonProcess.stdin.end();   
 
-    const inputData = {
-      bmi,
-      blood_glucose_level,
-      HbA1c_level,
-      smoking_history,
-      gender: user.gender,
-      age: user.age,
-      hypertension: user.personalMedicalHistory.hypertension,
-      heart_disease: user.personalMedicalHistory.heartDisease
-    };
-
-    // Log inputData before sending to Python script
-    // console.log('Input data to Python script:', inputData);
-
-    const response = await axios.post('http://localhost:5000/predict', inputData);
-
-    const predictionArray = response.data.prediction[0];
-    const [notDiabetes, diabetes] = predictionArray;
-
-    if (typeof notDiabetes !== 'number' || typeof diabetes !== 'number') {
-      throw new Error('Invalid prediction format');
-    }
-
-    let message;
-    if (notDiabetes > diabetes) {
-      message = `Prediction: Not Diabetes with ${(notDiabetes * 100).toFixed(2)}% certainty`;
-    } else {
-      message = `Prediction: Diabetes with ${(diabetes * 100).toFixed(2)}% certainty`;
-    }
-      res.json({ message });
-
-  } catch (error) {
-    console.error('Error in predictDiabetes:', error);
-    res.status(500).send('Error calling the prediction service');
-  }
+} catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+}
 };
-
-
-const predictDiabete = async (req, res) => {
-  try {
-    console.log('Received data:', req.body);
-
-    const authHeader = req.headers['token'];
-    if (!authHeader) {
-      return res.status(401).json({ error: 'Authorization header missing or invalid' });
-    }
-
-    const token = authHeader.split(' ')[1];
-
-    // Fetch additional data from user database
-    const user = await User.findOne({ token }).exec();
-    if (!user) {
-      return res.status(500).json({ error: 'User not found' });
-    }
-
-    const { bmi, blood_glucose_level, HbA1c_level, smoking_history } = req.body;
-
-    const inputData = {
-      bmi,
-      blood_glucose_level,
-      HbA1c_level,
-      smoking_history,
-      gender: user.gender,
-      age: user.age,
-      hypertension: user.personalMedicalHistory.hypertension,
-      heart_disease: user.personalMedicalHistory.heartDisease
-    };
-
-    // Log inputData before sending to Python script
-    console.log('Input data to Python script:', inputData);
-
-    const response = await axios.post('http://localhost:5000/predict', inputData);
-    console.log('Prediction response:', response.data);
-
-    // Extracting prediction values from response
-    const predictionArray = response.data.prediction[0];
-    const [notDiabetes, diabetes] = predictionArray;
-
-    if (typeof notDiabetes !== 'number' || typeof diabetes !== 'number') {
-      throw new Error('Invalid prediction format');
-    }
-
-    let message;
-    if (notDiabetes > diabetes) {
-      message = `Prediction: Not Diabetes with ${(notDiabetes * 100).toFixed(2)}% certainty`;
-    } else {
-      message = `Prediction: Diabetes with ${(diabetes * 100).toFixed(2)}% certainty`;
-    }
-
-    res.json({ message });
-  } catch (error) {
-    console.error('Error in predictDiabetes:', error);
-    res.status(500).send('Error calling the prediction service');
-  }
-};
-
 // get user by qr
 const userByQr = async (req, res) => {
   try {
