@@ -1,5 +1,0 @@
-Flask==2.1.2
-tensorflow==2.8.0
-scikit-learn==1.0.2
-joblib==1.1.0
-python-dotenv==0.20.0
