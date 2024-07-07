@@ -6,7 +6,7 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const { spawn } = require('child_process');
 const upload = require('../middlewares/multer');
-const { use } = require('../routes/userRoutes');
+const { use } = require('../routes/userRoutes'); 
 
 
 const createUser = async (req, res) => {
@@ -278,7 +278,7 @@ const clinicEvaluation = async (req, res) => {
 
 
 const predictDiabetes = async(req, res) => {
-  try {
+  try { 
     const authHeader = req.headers['token'];
     const token =authHeader.split(' ')[1];
    
